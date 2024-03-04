@@ -32,11 +32,11 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation reserveSpot(Integer userId, Integer parkingLotId, Integer timeInHours, Integer numberOfWheels) throws Exception {
         // Find the user
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new Exception("Cannot make reservation"));
 
         // Find the parking lot
         ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId)
-                .orElseThrow(() -> new Exception("Parking lot not found"));
+                .orElseThrow(() -> new Exception("Cannot make reservation"));
 
         // Find all spots in the parking lot that match the vehicle requirements
         List<Spot> availableSpots = spotRepository.findByParkingLotIdAndSpotTypeGreaterThanEqual(parkingLotId, getSpotType(numberOfWheels));
@@ -46,7 +46,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .min(Comparator.comparingInt(Spot::getPricePerHour));
 
         // If no spot is available, throw an exception
-        Spot reservedSpot = optionalSpot.orElseThrow(() -> new Exception("No spot available"));
+        Spot reservedSpot = optionalSpot.orElseThrow(() -> new Exception("Cannot make reservation"));
 
         // Create a new reservation
         Reservation reservation = new Reservation();

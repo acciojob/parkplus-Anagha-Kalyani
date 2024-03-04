@@ -14,7 +14,6 @@ public class ParkingLot {
     private String name;
     private String address;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "parkingLot",cascade = CascadeType.ALL)
     List<Spot> spotList;
 
