@@ -18,8 +18,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment pay(Integer reservationId, int amountSent, String mode) throws Exception {
-        Reservation reservation = reservationRepository2.findById(reservationId)
-                .orElseThrow(() -> new Exception("Reservation not found"));
+        Reservation reservation = reservationRepository2.findById(reservationId).get();
 
         int billAmount = calculateBillAmount(reservation);
 
@@ -36,7 +35,8 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentCompleted(true);
         payment.setPaymentMode(PaymentMode.valueOf(mode.toUpperCase()));
 
-        return paymentRepository2.save(payment);
+        Reservation savedReservation=reservationRepository2.save(reservation);
+        return payment;
     }
 
     private int calculateBillAmount(Reservation reservation) {

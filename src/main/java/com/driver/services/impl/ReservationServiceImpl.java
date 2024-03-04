@@ -59,7 +59,8 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setTotalPrice(totalPrice);
 
         // Save the reservation
-        return reservationRepository.save(reservation);
+        Reservation savedReservation=reservationRepository.save(reservation);
+        return reservation;
     }
 
     // Helper method to determine the spot type based on the number of wheels
