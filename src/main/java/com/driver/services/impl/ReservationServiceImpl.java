@@ -53,7 +53,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setUser(user);
         reservation.setSpot(reservedSpot);
         reservation.setNumberOfHours(timeInHours);
-
+        reservedSpot.setOccupied(true);
         // Calculate total price
         int totalPrice = timeInHours * reservedSpot.getPricePerHour();
         reservation.setTotalPrice(totalPrice);
