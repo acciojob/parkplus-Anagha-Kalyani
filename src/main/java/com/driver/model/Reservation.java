@@ -61,4 +61,14 @@ public class Reservation {
     public void setNumberOfHours(int numberOfHours) {
         this.numberOfHours = numberOfHours;
     }
+
+
+    private int totalPrice;
+
+    public int getTotalPrice() { // Getter for total price
+        return totalPrice;
+    }
+    public void setTotalPrice(int totalPrice) { // Setter for total price
+        this.totalPrice = totalPrice;
+    }
 }

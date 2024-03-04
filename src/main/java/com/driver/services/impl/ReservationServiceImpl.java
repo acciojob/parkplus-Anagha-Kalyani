@@ -9,20 +9,67 @@ import com.driver.services.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
+
     @Autowired
-    UserRepository userRepository3;
+    UserRepository userRepository;
+
     @Autowired
-    SpotRepository spotRepository3;
+    SpotRepository spotRepository;
+
     @Autowired
-    ReservationRepository reservationRepository3;
+    ReservationRepository reservationRepository;
+
     @Autowired
-    ParkingLotRepository parkingLotRepository3;
+    ParkingLotRepository parkingLotRepository;
+
     @Override
     public Reservation reserveSpot(Integer userId, Integer parkingLotId, Integer timeInHours, Integer numberOfWheels) throws Exception {
+        // Find the user
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found"));
 
+        // Find the parking lot
+        ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId)
+                .orElseThrow(() -> new Exception("Parking lot not found"));
+
+        // Find all spots in the parking lot that match the vehicle requirements
+        List<Spot> availableSpots = spotRepository.findByParkingLotIdAndSpotTypeGreaterThanEqual(parkingLotId, getSpotType(numberOfWheels));
+
+        // Find the spot with the minimum price per hour
+        Optional<Spot> optionalSpot = availableSpots.stream()
+                .min(Comparator.comparingInt(Spot::getPricePerHour));
+
+        // If no spot is available, throw an exception
+        Spot reservedSpot = optionalSpot.orElseThrow(() -> new Exception("No spot available"));
+
+        // Create a new reservation
+        Reservation reservation = new Reservation();
+        reservation.setUser(user);
+        reservation.setSpot(reservedSpot);
+        reservation.setNumberOfHours(timeInHours);
+
+        // Calculate total price
+        int totalPrice = timeInHours * reservedSpot.getPricePerHour();
+        reservation.setTotalPrice(totalPrice);
+
+        // Save the reservation
+        return reservationRepository.save(reservation);
+    }
+
+    // Helper method to determine the spot type based on the number of wheels
+    private SpotType getSpotType(Integer numberOfWheels) {
+        if (numberOfWheels == 2) {
+            return SpotType.TWO_WHEELER;
+        } else if (numberOfWheels == 4) {
+            return SpotType.FOUR_WHEELER;
+        } else {
+            return SpotType.OTHERS;
+        }
     }
 }
