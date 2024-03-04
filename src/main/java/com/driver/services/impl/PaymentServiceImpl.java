@@ -19,16 +19,16 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment pay(Integer reservationId, int amountSent, String mode) throws Exception {
         Reservation reservation = reservationRepository2.findById(reservationId)
-                .orElseThrow(() -> new Exception("Reservation not found"));
+                .orElseThrow(() -> new Exception("Cannot make reservation"));
 
         int billAmount = calculateBillAmount(reservation);
 
         if (amountSent < billAmount) {
-            throw new Exception("Insufficient Amount");
+            throw new Exception("Cannot make reservation");
         }
 
         if (!isValidPaymentMode(mode)) {
-            throw new Exception("Payment mode not detected");
+            throw new Exception("Cannot make reservation");
         }
 
         Payment payment = new Payment();
