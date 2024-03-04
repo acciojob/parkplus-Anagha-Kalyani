@@ -58,10 +58,10 @@ public class ReservationServiceImpl implements ReservationService {
         int totalPrice = timeInHours * reservedSpot.getPricePerHour();
         reservation.setTotalPrice(totalPrice);
 
-        // Save the reservation
-        Reservation savedReservation=reservationRepository.save(reservation);
-        return reservation;
+        // Save the reservation and return the saved reservation
+        return reservationRepository.save(reservation);
     }
+
 
     // Helper method to determine the spot type based on the number of wheels
     private SpotType getSpotType(Integer numberOfWheels) {
